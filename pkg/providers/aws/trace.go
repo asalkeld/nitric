@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	lambdadetector "go.opentelemetry.io/contrib/detectors/aws/lambda"
 	"go.opentelemetry.io/contrib/propagators/aws/xray"
 	"go.opentelemetry.io/otel"
@@ -31,6 +32,9 @@ import (
 )
 
 func newTracerProvider(ctx context.Context) (*sdktrace.TracerProvider, error) {
+	span.FunctionName = lambdacontext.FunctionName
+	span.UseFuncNameAsSpanName = true
+
 	exp, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err

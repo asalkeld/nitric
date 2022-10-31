@@ -46,6 +46,9 @@ import (
 )
 
 func newTraceProvider(ctx context.Context) (*sdktrace.TracerProvider, error) {
+	span.FunctionName = os.Getenv("K_SERVICE")
+	span.UseFuncNameAsSpanName = false
+
 	exp, err := otlptracegrpc.New(ctx, otlptracegrpc.WithInsecure())
 	if err != nil {
 		return nil, err
@@ -69,8 +72,6 @@ func newTraceProvider(ctx context.Context) (*sdktrace.TracerProvider, error) {
 			propagation.TraceContext{},
 			propagation.Baggage{},
 		))
-
-	span.UseFuncNameAsSpanName = false
 
 	return sdktrace.NewTracerProvider(
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
